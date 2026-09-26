@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Happy Birthday Nishtha jii! 🎂🌸</title>
+
+  <!-- Google Fonts & Confetti CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #fff1f5;
+      --pink: #ff4d79;
+      --pink-dark: #d81b60;
+      --pink-soft: #ffe4ec;
+      --text: #4a2835;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* Ambient Romantic Background for Laptops & Mobile */
+    body {
+      background: radial-gradient(circle at center, #2e101d 0%, #15060d 100%);
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Background Falling Petals Canvas (Spans Full Screen on Laptop & Phone) */
+    #bgPetalsCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Touch Sparkle Trail Elements */
+    .sparkle-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 1.2rem;
+      animation: floatFade 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes floatFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -100px) scale(1.4) rotate(45deg); }
+    }
+
+    /* Responsive App Card */
+    .app-card {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      height: 100dvh;
+      background: linear-gradient(175deg, #fff5f8 0%, #ffeaf0 55%, #fde2e8 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 60px rgba(255, 77, 121, 0.35);
+      z-index: 10;
+    }
+
+    @media (min-width: 480px) {
+      .app-card {
+        height: 92vh;
+        max-height: 840px;
+        border-radius: 42px;
+        border: 4px solid rgba(255, 255, 255, 0.85);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 45px rgba(255, 77, 121, 0.3);
+      }
+    }
+
+    /* Top Bar */
+    .top-header {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.92);
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      color: var(--pink-dark);
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 10px rgba(255, 77, 121, 0.15);
+      transition: transform 0.2s;
+    }
+    .back-btn:active { transform: scale(0.94); }
+
+    .music-pill {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 25px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 12px rgba(255, 77, 121, 0.15);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--pink);
+      cursor: pointer;
+      margin-left: auto;
+      transition: transform 0.2s;
+    }
+    .music-pill:active { transform: scale(0.96); }
+
+    .music-pill .disc {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: conic-gradient(var(--pink), #ffd1dc, var(--pink));
+      animation: spin 3s linear infinite;
+      animation-play-state: paused;
+    }
+    .music-pill.playing .disc { animation-play-state: running; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Page Engine */
+    .page-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 65px 22px 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95) translateY(25px);
+      transition: all 0.5s cubic-bezier(0.34, 1.45, 0.64, 1);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Headings */
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.15rem); }
+    h2 { font-size: clamp(1.5rem, 4.5vw, 1.8rem); }
+
+    .sub-head {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.5rem, 4.5vw, 1.85rem);
+      color: var(--pink);
+      margin-bottom: 4px;
+      animation: pulseSub 2.2s infinite ease-in-out;
+    }
+    @keyframes pulseSub {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    p.subtext {
+      font-size: clamp(0.85rem, 2.5vw, 0.94rem);
+      color: #724b5a;
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    .btn-pink {
+      background: linear-gradient(135deg, #ff4d79, #ff758f);
+      color: white;
+      border: none;
+      padding: 13px 32px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(255, 77, 121, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-pink:active { transform: scale(0.94); }
+
+    /* ================= SCREEN 1: WELCOME ================= */
+    .bear-hero {
+      font-size: clamp(4.2rem, 11vw, 5.2rem);
+      margin: 10px 0;
+      animation: cuteWiggle 2.5s infinite ease-in-out;
+      filter: drop-shadow(0 10px 15px rgba(255, 77, 121, 0.2));
+    }
+    @keyframes cuteWiggle {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-6deg) scale(1.06); }
+      75% { transform: rotate(6deg) scale(1.06); }
+    }
+    .btn-row {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 15px;
+      position: relative;
+      width: 100%;
+      min-height: 60px;
+    }
+    .btn-runaway {
+      background: #f1e4ea;
+      color: #7a5263;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: 700;
+      cursor: pointer;
+      position: absolute;
+      transition: all 0.2s ease;
+    }
+
+    /* ================= SCREEN 2: FLOATING BALLOONS ================= */
+    .balloons-area {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px 16px;
+      width: 100%;
+      max-width: 280px;
+      margin: 15px 0 20px;
+    }
+    .balloon-card {
+      height: 105px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      animation: balloonFloat 3s infinite ease-in-out alternate;
+    }
+    .balloon-card:nth-child(2) { animation-delay: 0.5s; }
+    .balloon-card:nth-child(3) { animation-delay: 1s; }
+    .balloon-card:nth-child(4) { animation-delay: 1.5s; }
+
+    @keyframes balloonFloat {
+      0% { transform: translateY(0px) rotate(-2deg); }
+      100% { transform: translateY(-10px) rotate(2deg); }
+    }
+
+    .balloon-body {
+      width: 70px;
+      height: 85px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset -6px -6px 12px rgba(0,0,0,0.1), 0 10px 20px rgba(255, 77, 121, 0.2);
+      font-size: 1.4rem;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .balloon-body::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      width: 2px;
+      height: 14px;
+      background: #cbb2ba;
+    }
+    .b-pink { background: linear-gradient(135deg, #ff9ebb, #ff6b8b); }
+    .b-blue { background: linear-gradient(135deg, #a8d5ff, #70a1ff); }
+    .b-green { background: linear-gradient(135deg, #a8ffcc, #4cd97b); }
+    .b-yellow { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+
+    .balloon-card.popped { animation: none; }
+    .balloon-card.popped .balloon-body {
+      background: white !important;
+      border: 2px dashed var(--pink);
+      box-shadow: none;
+      border-radius: 18px;
+      width: 85px;
+      height: 55px;
+    }
+    .balloon-card.popped .balloon-body::after { display: none; }
+    .balloon-card .revealed-word {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--pink-dark);
+      display: none;
+    }
+    .balloon-card.popped .revealed-word { display: block; }
+    .balloon-card.popped .balloon-icon { display: none; }
+
+    /* ================= SCREEN 3: CAKE & CANDLE SMOKE ================= */
+    .cake-stage {
+      position: relative;
+      margin: 25px 0 20px;
+      cursor: pointer;
+    }
+    .cake-base-plate {
+      width: 150px;
+      height: 80px;
+      background: #ffe0cc;
+      border-radius: 14px 14px 40px 40px;
+      position: relative;
+      box-shadow: 0 10px 0 #f3aa79, 0 15px 30px rgba(243, 170, 121, 0.3);
+    }
+    .cake-base-plate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 32px;
+      background: #ff758f;
+      border-radius: 14px 14px 20px 20px;
+    }
+    .single-candle {
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 32px;
+      background: repeating-linear-gradient(45deg, #fff, #fff 4px, var(--pink) 4px, var(--pink) 8px);
+      border-radius: 3px;
+    }
+    .candle-fire {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 15px;
+      height: 22px;
+      background: #ffb703;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 15px #ffb703, 0 0 35px #ff4d6d;
+      animation: flameWobble 0.7s infinite alternate ease-in-out;
+    }
+    @keyframes flameWobble {
+      0% { transform: translateX(-50%) scale(1) rotate(-3deg); }
+      100% { transform: translateX(-50%) scale(1.15) rotate(3deg); }
+    }
+
+    .smoke-puff {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .smoke-puff.rise {
+      animation: smokeRise 1.6s ease-out forwards;
+    }
+    @keyframes smokeRise {
+      0% { opacity: 0.8; transform: translate(-50%, 0) scale(0.6); }
+      100% { opacity: 0; transform: translate(-50%, -45px) scale(1.6); }
+    }
+
+    /* ================= SCREEN 4: BOUQUET (4 TAGS) ================= */
+    .bouquet-box {
+      font-size: clamp(4rem, 11vw, 5rem);
+      margin: 8px 0;
+      animation: floatBouquet 3s infinite ease-in-out;
+    }
+    @keyframes floatBouquet {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(4deg); }
+    }
+    .tags-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 12px 0 20px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .tag-bubble {
+      background: white;
+      border: 1.5px solid #ffccd7;
+      padding: 7px 15px;
+      border-radius: 20px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--pink-dark);
+      box-shadow: 0 4px 10px rgba(255, 77, 121, 0.1);
+      transition: transform 0.2s;
+    }
+    .tag-bubble:hover { transform: scale(1.05); }
+
+    /* ================= SCREEN 5: 3D ENVELOPE (LETTER) ================= */
+    .envelope-wrapper {
+      position: relative;
+      width: 270px;
+      height: 160px;
+      background: #ff85a1;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(255, 77, 121, 0.25);
+      margin: 18px 0 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .envelope-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-left: 135px solid transparent;
+      border-right: 135px solid transparent;
+      border-top: 88px solid #ff9ebb;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 3;
+    }
+    .envelope-stamp {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      background: #ff4d79;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      z-index: 4;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: opacity 0.3s;
+      animation: pulse 1.8s infinite;
+    }
+    .envelope-wrapper.open::before {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+    .envelope-wrapper.open .envelope-stamp { opacity: 0; }
+
+    .letter-slide {
+      display: none;
+      background: #fffdf9;
+      border: 1.5px dashed #ffa4b6;
+      border-radius: 18px;
+      padding: 20px 18px;
+      text-align: left;
+      font-size: 0.93rem;
+      line-height: 1.75;
+      color: #3f222e;
+      box-shadow: 0 10px 30px rgba(255, 77, 121, 0.15);
+      max-height: 290px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      animation: letterPop 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+    }
+    .letter-slide p {
+      margin-bottom: 12px;
+    }
+    .letter-slide p:last-child {
+      margin-bottom: 0;
+    }
+
+    @keyframes letterPop {
+      from { opacity: 0; transform: translateY(20px) scale(0.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ================= SCREEN 6: GIFT BLAST ================= */
+    .gift-cube {
+      font-size: clamp(4.5rem, 12vw, 5.8rem);
+      cursor: pointer;
+      animation: pulseGift 1.4s infinite ease-in-out;
+      margin: 12px 0;
+      transition: transform 0.2s;
+    }
+    .gift-cube:active { transform: scale(1.25); }
+
+    @keyframes pulseGift {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.14); }
+    }
+
+    /* Small Screen Optimization */
+    @media (max-height: 680px) {
+      .page { padding: 55px 16px 15px; }
+      .cake-stage { margin: 15px 0 10px; }
+      .balloons-area { gap: 10px 8px; margin: 10px 0 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Falling Petals Canvas -->
+  <canvas id="bgPetalsCanvas"></canvas>
+
+  <!-- Audio Element (song.mp3 configured with fallback) -->
+  <audio id="bgSong" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_c8959d3a04.mp3?filename=romantic-acoustic-guitar-112191.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="app-card">
+
+    <!-- Top Bar Navigation -->
+    <div class="top-header">
+      <button class="back-btn" id="backBtn" onclick="goBack()">‹ Back</button>
+      <div class="music-pill" id="musicPill" onclick="toggleMusic()">
+        <div class="disc"></div>
+        <span id="musicText">Song: Play 🎵</span>
+      </div>
+    </div>
+
+    <div class="page-container">
+
+      <!-- ================= SCREEN 1: WELCOME & RUNAWAY NO ================= -->
+      <div class="page active" id="p1">
+        <div class="sub-head">A little surprise for you...</div>
+        <h1>Happy Birthday, Nishtha jii! 🥰🌸</h1>
+        <div class="bear-hero">🧸🎂</div>
+        <p class="subtext">Are you excited for what's coming next?</p>
+
+        <div class="btn-row">
+          <button class="btn-pink" onclick="startApp()">Yes! 💕</button>
+          <button class="btn-runaway" id="noBtn" onmouseover="dodge()" onclick="dodge()">No 😜</button>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 2: FLOATING BALLOONS ================= -->
+      <div class="page" id="p2">
+        <div class="sub-head">pop pop pop!</div>
+        <h2>Pop All 4 Balloons 🎈</h2>
+        <p class="subtext">Har balloon par tap karke secret message dekho:</p>
+
+        <div class="balloons-area">
+          <div class="balloon-card" onclick="popBalloon(this, 'You')">
+            <div class="balloon-body b-pink">
+              <span class="balloon-icon">🎈</span>
+              <span class="revealed-word">You</span>
+            </div>
+          </div>
+          <div class="balloon-card" onclick="popBalloon(this, 'Are')">
+            <div class="balloon-body b-blue">
+              <span class="balloon-icon">🎈</span>
+              <span class="revealed-word">Are</span>
+            </div>
+          </div>
+          <div class="balloon-card" onclick="popBalloon(this, 'So')">
+            <div class="balloon-body b-green">
+              <span class="balloon-icon">🎈</span>
+              <span class="revealed-word">So</span>
+            </div>
+          </div>
+          <div class="balloon-card" onclick="popBalloon(this, 'Special ❤️')">
+            <div class="balloon-body b-yellow">
+              <span class="balloon-icon">🎈</span>
+              <span class="revealed-word">Special ❤️</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-pink" id="balloonNextBtn" style="display:none;" onclick="goToPage(3)">Next Surprise 👉</button>
+      </div>
+
+      <!-- ================= SCREEN 3: BLOW CANDLE ================= -->
+      <div class="page" id="p3">
+        <div class="sub-head">make a sweet wish...</div>
+        <h2>Blow The Candle 🕯️</h2>
+        <p class="subtext" id="candleMsg">Tap to blow the candle & close your eyes!</p>
+
+        <div class="cake-stage" onclick="blowCandle()">
+          <div class="single-candle">
+            <div class="candle-fire" id="flame"></div>
+            <div class="smoke-puff" id="smoke">💨</div>
+          </div>
+          <div class="cake-base-plate"></div>
+        </div>
+
+        <button class="btn-pink" id="cakeNextBtn" style="display:none;" onclick="goToPage(4)">See Your Flowers 🌸</button>
+      </div>
+
+      <!-- ================= SCREEN 4: ROSE BOUQUET (4 TAGS) ================= -->
+      <div class="page" id="p4">
+        <div class="sub-head">fresh roses for you...</div>
+        <h2>Your Rose Bouquet 🌹</h2>
+        <div class="bouquet-box">💐</div>
+
+        <div class="tags-cloud">
+          <div class="tag-bubble">✨ Always keep shining</div>
+          <div class="tag-bubble">🌸 Believe in yourself</div>
+          <div class="tag-bubble">💕 Smile suits you best</div>
+          <div class="tag-bubble">💖 Keep smiling always</div>
+        </div>
+
+        <!-- DIRECTLY GOES TO LETTER -->
+        <button class="btn-pink" onclick="goToPage(5)">Read My Letter 💌</button>
+      </div>
+
+      <!-- ================= SCREEN 5: 3D ENVELOPE (LETTER) ================= -->
+      <div class="page" id="p5">
+        <div class="sub-head">a message from my heart...</div>
+        <h2>A Letter For You 💌</h2>
+
+        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+          <div class="envelope-stamp">💖</div>
+          <span style="color:white; font-weight:700; margin-top:55px;">Tap to open</span>
+        </div>
+
+        <!-- EXACT LETTER TEXT -->
+        <div class="letter-slide" id="letterText">
+          <p style="font-size: 1.05rem; font-weight: 700; color: var(--pink);">Happy Birthdayyy! 🥹🎀❤️</p>
+          <p>I hope your day is filled with lots of happiness, laughter, and all the little things that make you smile. 🫶🏻✨</p>
+          <p>Stay the same sweet, crazy, and adorable person you are. You truly deserve all the good things coming your way. 💗</p>
+          <p>Have the most amazing birthday, birthday girl! 🎂🥳✨</p>
+        </div>
+
+        <button class="btn-pink" id="letterNextBtn" style="display:none;" onclick="goToPage(6)">One Last Thing 🎁</button>
+      </div>
+
+      <!-- ================= SCREEN 6: GIFT BLAST ================= -->
+      <div class="page" id="p6">
+        <div class="sub-head">party time! 🥳</div>
+        <h2>One Last Gift 🎁</h2>
+        <p class="subtext">Tap the gift box to celebrate!</p>
+
+        <div class="gift-cube" onclick="partyBlast()">🎁</div>
+
+        <h3 id="celebrateMsg" style="display:none; color:var(--pink); font-size:1.35rem; font-family:'Playfair Display', serif; margin-top:15px;">
+          Happy Birthday Once Again! Keep Shining! 💖✨
+        </h3>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let activePage = 1;
+    let balloonsPopped = 0;
+    const audio = document.getElementById('bgSong');
+    const musicPill = document.getElementById('musicPill');
+    const musicText = document.getElementById('musicText');
+    const backBtn = document.getElementById('backBtn');
+    let isPlaying = false;
+
+    // Web Audio Synthesizer for Pop Sound
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playPopSound() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    }
+
+    // Force Play Song on "Yes!" Click
+    function forcePlayMusic() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      audio.play().then(() => {
+        musicPill.classList.add('playing');
+        musicText.innerText = "Playing Song 🎶";
+        isPlaying = true;
+      }).catch(err => {
+        console.log("Audio play wait:", err);
+      });
+    }
+
+    // Manual Toggle from Top Bar
+    function toggleMusic() {
+      if (isPlaying) {
+        audio.pause();
+        musicPill.classList.remove('playing');
+        musicText.innerText = "Song: Paused ⏸️";
+        isPlaying = false;
+      } else {
+        forcePlayMusic();
+      }
+    }
+
+    // Runaway "No" Button
+    function dodge() {
+      const btn = document.getElementById('noBtn');
+      const x = (Math.random() - 0.5) * 200;
+      const y = (Math.random() - 0.5) * 90;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    // Triggered automatically on "Yes! 💕" click
+    function startApp() {
+      forcePlayMusic();
+      confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+      goToPage(2);
+    }
+
+    // Page Navigation
+    function goToPage(pageNum) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('p' + pageNum).classList.add('active');
+      activePage = pageNum;
+      backBtn.style.display = (activePage > 1) ? 'block' : 'none';
+    }
+
+    function goBack() {
+      if (activePage > 1) {
+        goToPage(activePage - 1);
+      }
+    }
+
+    // Balloon Popping
+    function popBalloon(card, word) {
+      if (!card.classList.contains('popped')) {
+        playPopSound();
+        card.classList.add('popped');
+        balloonsPopped++;
+        confetti({ particleCount: 20, spread: 45, origin: { y: 0.55 } });
+        if (balloonsPopped === 4) {
+          document.getElementById('balloonNextBtn').style.display = 'inline-block';
+        }
+      }
+    }
+
+    // Candle Blow & Smoke Animation
+    function blowCandle() {
+      const flame = document.getElementById('flame');
+      const smoke = document.getElementById('smoke');
+      if (flame.style.display !== 'none') {
+        flame.style.display = 'none';
+        smoke.classList.add('rise');
+        document.getElementById('candleMsg').innerHTML = "<strong style='color:#ff4d79;'>✨ Wish noted! Close your eyes & make a wish... ✨</strong>";
+        confetti({ particleCount: 80, spread: 75, origin: { y: 0.6 } });
+        document.getElementById('cakeNextBtn').style.display = 'inline-block';
+      }
+    }
+
+    // Open Envelope
+    function openEnvelope() {
+      const env = document.getElementById('envelope');
+      const letter = document.getElementById('letterText');
+      const btn = document.getElementById('letterNextBtn');
+
+      env.classList.add('open');
+      setTimeout(() => {
+        env.style.display = 'none';
+        letter.style.display = 'block';
+        btn.style.display = 'inline-block';
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+      }, 500);
+    }
+
+    // Final Celebration
+    function partyBlast() {
+      document.getElementById('celebrateMsg').style.display = 'block';
+      const end = Date.now() + (3.5 * 1000);
+
+      (function frame() {
+        confetti({
+          particleCount: 6,
+          angle: 60,
+          spread: 60,
+          origin: { x: 0, y: 0.7 }
+        });
+        confetti({
+          particleCount: 6,
+          angle: 120,
+          spread: 60,
+          origin: { x: 1, y: 0.7 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+
+    // Touch Sparkle Trail
+    const sparkles = ['💖', '🌸', '✨', '💕', '⭐'];
+    function createSparkle(x, y) {
+      const el = document.createElement('div');
+      el.className = 'sparkle-trail';
+      el.innerText = sparkles[Math.floor(Math.random() * sparkles.length)];
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }
+
+    window.addEventListener('mousemove', e => {
+      if (Math.random() > 0.65) createSparkle(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('touchmove', e => {
+      const touch = e.touches[0];
+      if (Math.random() > 0.65) createSparkle(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    // Falling Petals Canvas
+    const canvas = document.getElementById('bgPetalsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const petals = [];
+    for (let i = 0; i < 30; i++) {
+      petals.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 8 + 6,
+        speedX: Math.random() * 1.5 - 0.75,
+        speedY: Math.random() * 1.2 + 0.8,
+        angle: Math.random() * 360,
+        spin: Math.random() * 2 - 1,
+        color: ['#ffccd5', '#ffb7c5', '#ffe5ec', '#ffcbf2'][Math.floor(Math.random() * 4)]
+      });
+    }
+
+    function drawPetals() {
+      ctx.clearRect(0, 0, width, height);
+      petals.forEach(p => {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.angle += p.spin;
+
+        if (p.y > height) {
+          p.y = -10;
+          p.x = Math.random() * width;
+        }
+      });
+      requestAnimationFrame(drawPetals);
+    }
+    drawPetals();
+  </script>
+</body>
+</html>
